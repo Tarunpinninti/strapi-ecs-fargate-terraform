@@ -32,7 +32,13 @@ data "aws_subnets" "public" {
 
 data "aws_security_group" "strapi_sg" {
   filter {
-    name   = "group-name"
+    name   = "tag:Name"
     values = ["strapi-sg"]
   }
+
+  filter {
+    name   = "vpc-id"
+    values = ["vpc-05ba494c8673c0267"] # ← YOUR EXISTING VPC ID
+  }
 }
+
