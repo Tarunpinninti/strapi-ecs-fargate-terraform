@@ -11,8 +11,8 @@ resource "aws_ecs_task_definition" "strapi_task" {
   container_definitions = jsonencode([
     {
       name      = "strapi"
-      image     = "${data.aws_ecr_repository.strapi.repository_url}:${var.image_tag}"
       essential = true
+      image     = "${data.aws_ecr_repository.strapi.repository_url}:${var.image_tag}"
 
       portMappings = [
         {
@@ -22,7 +22,10 @@ resource "aws_ecs_task_definition" "strapi_task" {
       ]
 
       environment = [
-        { name = "NODE_ENV", value = "production" }
+        {
+          name  = "NODE_ENV"
+          value = "production"
+        }
       ]
 
       logConfiguration = {
