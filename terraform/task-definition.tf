@@ -11,8 +11,8 @@ resource "aws_ecs_task_definition" "strapi_task" {
   container_definitions = jsonencode([
     {
       name      = "strapi"
-      essential = true
       image     = "${data.aws_ecr_repository.strapi.repository_url}:${var.image_tag}"
+      essential = true
 
       portMappings = [
         {

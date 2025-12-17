@@ -1,14 +1,6 @@
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.0"
-    }
-  }
+# ----------------------------------------
+# VPC (explicit – no ambiguity)
+# ----------------------------------------
+data "aws_vpc" "strapi_vpc" {
+  id = var.vpc_id
 }
-
-provider "aws" {
-  region = "us-east-1"
-}
-
-
