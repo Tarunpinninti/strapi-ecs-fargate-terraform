@@ -1,34 +1,22 @@
 # ----------------------------------------
-# Existing ECS Cluster
+# ECS Cluster (existing)
 # ----------------------------------------
 data "aws_ecs_cluster" "strapi_cluster" {
   cluster_name = "strapi-fargate-cluster"
 }
 
 # ----------------------------------------
-# Existing ECS Service (source of truth)
-# ----------------------------------------
-data "aws_ecs_service" "strapi_service" {
-  cluster_arn = data.aws_ecs_cluster.strapi_cluster.arn
-  service_name = "strapi-service"
-}
-
-# ----------------------------------------
-# Security Group (EXACT one used by ECS)
-# ----------------------------------------
-data "aws_security_group" "strapi_sg" {
-  id = data.aws_ecs_service.strapi_service.network_configuration[0].security_groups[0]
-}
-
-# ----------------------------------------
-# VPC from that Security Group
+# VPC (the one you already use)
 # ----------------------------------------
 data "aws_vpc" "strapi_vpc" {
-  id = data.aws_security_group.strapi_sg.vpc_id
+  filter {
+    name   = "tag:Name"
+    values = ["strapi-vpc"]
+  }
 }
 
 # ----------------------------------------
-# Subnets ONLY from that VPC
+# Subnets ONLY from this VPC
 # ----------------------------------------
 data "aws_subnets" "public" {
   filter {
@@ -38,14 +26,29 @@ data "aws_subnets" "public" {
 }
 
 # ----------------------------------------
-# Existing ECR Repository
+# Security Group (name + VPC = UNIQUE)
+# ----------------------------------------
+data "aws_security_group" "strapi_sg" {
+  filter {
+    name   = "group-name"
+    values = ["strapi-sg"]
+  }
+
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.strapi_vpc.id]
+  }
+}
+
+# ----------------------------------------
+# ECR Repository (existing)
 # ----------------------------------------
 data "aws_ecr_repository" "strapi" {
   name = "strapi-ecr-repo"
 }
 
 # ----------------------------------------
-# Existing IAM Roles
+# IAM Roles (existing)
 # ----------------------------------------
 data "aws_iam_role" "ecs_task_execution_role" {
   name = "ecsTaskExecutionRole"
@@ -56,7 +59,7 @@ data "aws_iam_role" "ecs_task_role" {
 }
 
 # ----------------------------------------
-# Existing CloudWatch Log Group
+# CloudWatch Logs (existing)
 # ----------------------------------------
 data "aws_cloudwatch_log_group" "strapi_logs" {
   name = "/ecs/strapi"
