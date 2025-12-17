@@ -1,5 +1,5 @@
 resource "aws_ecs_service" "strapi_service" {
-  name            = "strapi-service"
+  name            = "strapi-service-cicd"
   cluster         = data.aws_ecs_cluster.strapi_cluster.arn
   task_definition = aws_ecs_task_definition.strapi_task.arn
   desired_count   = 1
