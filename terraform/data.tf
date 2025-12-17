@@ -17,28 +17,28 @@ data "aws_iam_role" "ecs_task_role" {
   name = "ecsTaskRole"
 }
 
-# Existing CloudWatch Logs
+# Existing CloudWatch Log Group
 data "aws_cloudwatch_log_group" "strapi_logs" {
   name = "/ecs/strapi"
 }
 
-# Existing Network
-data "aws_subnets" "public" {
-  filter {
-    name   = "tag:Name"
-    values = ["strapi-public-a", "strapi-public-b"]
-  }
-}
-
+# 🔥 Existing Security Group (filter by name AND VPC)
 data "aws_security_group" "strapi_sg" {
   filter {
-    name   = "tag:Name"
+    name   = "group-name"
     values = ["strapi-sg"]
-  }
-
-  filter {
-    name   = "vpc-id"
-    values = ["vpc-05ba494c8673c0267"] # ← YOUR EXISTING VPC ID
   }
 }
 
+# 🔥 Get VPC from the security group
+data "aws_vpc" "strapi_vpc" {
+  id = data.aws_security_group.strapi_sg.vpc_id
+}
+
+# 🔥 Get ONLY subnets from that VPC
+data "aws_subnets" "public" {
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.strapi_vpc.id]
+  }
+}
