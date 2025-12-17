@@ -3,7 +3,3 @@ variable "image_tag" {
   type        = string
 }
 
-variable "vpc_id" {
-  description = "VPC ID where ECS is running"
-  type        = string
-}

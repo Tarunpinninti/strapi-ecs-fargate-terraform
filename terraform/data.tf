@@ -1,14 +1,14 @@
-# Existing ECS Cluster
+# ECS Cluster
 data "aws_ecs_cluster" "strapi_cluster" {
   cluster_name = "strapi-fargate-cluster"
 }
 
-# Existing ECR Repo
+# ECR Repository
 data "aws_ecr_repository" "strapi" {
   name = "strapi-ecr-repo"
 }
 
-# Existing IAM Roles
+# IAM Roles
 data "aws_iam_role" "ecs_task_execution_role" {
   name = "ecsTaskExecutionRole"
 }
@@ -17,19 +17,17 @@ data "aws_iam_role" "ecs_task_role" {
   name = "ecsTaskRole"
 }
 
-# Existing CloudWatch Logs
+# CloudWatch Logs
 data "aws_cloudwatch_log_group" "strapi_logs" {
   name = "/ecs/strapi"
 }
 
-# Existing VPC (ONLY HERE)
+# 🔒 LOCKED VPC (NO MORE MULTIPLE MATCHES)
 data "aws_vpc" "strapi_vpc" {
-  tags = {
-    Name = "strapi-vpc"
-  }
+  id = "vpc-05ba494c8673c0267"
 }
 
-# Public subnets ONLY from this VPC
+# Public Subnets ONLY from this VPC
 data "aws_subnets" "public" {
   filter {
     name   = "vpc-id"
@@ -37,7 +35,7 @@ data "aws_subnets" "public" {
   }
 }
 
-# Security Group (unique by name + VPC)
+# Security Group (unique inside VPC)
 data "aws_security_group" "strapi_sg" {
   name   = "strapi-sg"
   vpc_id = data.aws_vpc.strapi_vpc.id
